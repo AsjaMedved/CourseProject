@@ -1,26 +1,45 @@
 ## Описание
 Проведено функциональное тестирование веб-приложения AQA Shop, предназначенного для оформления туров с оплатой через банковскую карту или кредит.
-Тестирование охватывает UI, API и взаимодействие с базами данных (PostgreSQL и MySQL). Приложение развернуто в двух конфигурациях — с MySQL и PostgreSQL.
+Цель — проверить корректность работы формы оплаты, включая валидацию данных, запись в БД, корректность статусов транзакций.
+
+Тестирование включало:
+- UI-тесты формы оплаты
+- API-тесты отправки данных
+- Генерацию отчётов Allure
+- Регистрацию багов через issues в GitHub
 
 ## Колличество тест-кейсов
-- Всего: 31 тест-кейс
-- Успешно пройдены: 27 (87.09%)
-- Провалено: 4 (12.91%)
-  * https://github.com/AsjaMedved/CourseProject/issues/1
-![img_1.png](img_1.png)
-![img_2.png](img_2.png)
-  * https://github.com/AsjaMedved/CourseProject/issues/3
-  ![img_3.png](img_3.png)
-  ![img_4.png](img_4.png)
-  
+- Всего: 34 тест-кейсов
+- Успешно пройдены: 29 тестов (88.23%)
+- Провалено: 4 теста (11.77%)
+
 ## Общие рекомендации
-- Улучшить валидацию поля "Владелец" для предотвращения отправки некорректных данных.
-- Улучшить валидацию поля "Номер карты" для предотвращения отправки некорректных данных.
-
+- Исправить баг, связанный с неверной валидацией поля "Владелец" — при заполнении невалидными значениями операция покупки проходит успешно (см. [issue #1](https://github.com/AsjaMedved/CourseProject/issues/1)) и (см. [issue #2](https://github.com/AsjaMedved/CourseProject/issues/2))
+- Исправить баг, связанный с не верной валидацие поля "Номер карты" - при заполнении данными заблокированной карты операция покупки проходит успешно (см. [issue #3](https://github.com/AsjaMedved/CourseProject/issues/3)) и (см. [issue #4](https://github.com/AsjaMedved/CourseProject/issues/4))
+- 
 ## Интеграция отчётов
-Отчёт Allure: сгенерирован командой ./gradlew allureServe и доступен в: 
-- build/allure-report/index.html
+**Отчёт Allure**
+* сгенерирован командой:
+  * ./gradlew allureServe 
+* доступен по адресу:
+  * build/allure-report/index.html
 
-- Отчёт Gradle  
-- build/reports/tests/test/index.html
+**Отчёт Gradle**
+* Сгенерирован командой:
+  * .\gradlew test "-Dspring.profiles.active=mysql" - для MySQL 
+  * .\gradlew test "-Dspring.profiles.active=postgres" - для PostgreSQL
+* Доступен по адресу:
+  * build/reports/tests/test/index.html
+
+## Примеры багов
+* При заполнении поля "Владелец" не валидными значениями, операция покупки проходит успешно
+  * (см. [issue #1](https://github.com/AsjaMedved/CourseProject/issues/1)) 
+  * (см. [issue #2](https://github.com/AsjaMedved/CourseProject/issues/2))
+![img_5.png](img_5.png)
+![img_1.png](img_1.png)
+* При заполнении поля "номер карты" данными заблокированной карты, оперция проходит успешно 
+  * (см. [issue #3](https://github.com/AsjaMedved/CourseProject/issues/3)) 
+  * (см. [issue #4](https://github.com/AsjaMedved/CourseProject/issues/4))
+  ![img_6.png](img_6.png)
+  ![img.png](img.png)
 

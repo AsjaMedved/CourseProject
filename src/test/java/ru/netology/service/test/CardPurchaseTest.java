@@ -5,9 +5,11 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import ru.netology.service.data.DataHelper;
+import ru.netology.service.mode.DBUtils;
 import ru.netology.service.page.Purchase;
 
 import static com.codeborne.selenide.Selenide.open;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CardPurchaseTest {
 
@@ -287,4 +289,21 @@ public class CardPurchaseTest {
         purchase.fieldCvc.shouldHave(Condition.value(""));
     }
 
+    @Test
+    @DisplayName("Проверка статуса в Postgres")
+    void shouldBuyWithValidCardAndCheckStatusInPostgres() {
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.successfulSubmissionOfTheForm("Операция одобрена Банком.");
+        String status = DBUtils.getLastPaymentStatusPostgres();
+        assertEquals("APPROVED", status);
+    }
+
+    @Test
+    @DisplayName("Проверка статуса в Mysql")
+    void shouldBuyWithValidCardAndCheckStatusInMysql() {
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.successfulSubmissionOfTheForm("Операция одобрена Банком.");
+        String status = DBUtils.getLastPaymentStatusMysql();
+        assertEquals("APPROVED", status);
+    }
 }
