@@ -6,8 +6,6 @@ services:
     container_name: postgres-db
     ports:
       - "5432:5432"
-    volumes:
-      - ./src/test/resources/schema-postgres.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       POSTGRES_DB: app
       POSTGRES_USER: app
@@ -18,8 +16,6 @@ services:
     container_name: mysql-db
     ports:
       - "3306:3306"
-    volumes:
-      - ./src/test/resources/schema-mysql.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
       MYSQL_DATABASE: app

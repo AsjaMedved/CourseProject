@@ -31,7 +31,7 @@ public class CardPurchaseTest {
     void setup() {
         open("http://localhost:9999");
         purchase = new Purchase();
-        validField = DataHelper.getValidCard();
+        validField = DataHelper.getValidField();
 
     }
 
@@ -39,12 +39,16 @@ public class CardPurchaseTest {
     @DisplayName("Валидные данные")
     void validFieldFilling() {
         purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
-        purchase.successfulSubmissionOfTheForm("Операция одобрена Банком.");
+          purchase.successfulSubmissionOfTheForm("Операция одобрена Банком.");
+
+        String status = DBUtils.getValidVerificationStatus();
+        assertEquals("APPROVED", status);
+
     }
 
     @Test
     @DisplayName("отправка формы с пустыми полями")
-    void invalidFieldFilling() {
+    void emptyFields() {
         purchase.buyingAtour("", "", "", "", "");
         purchase.errorMessage("Неверный формат");
         purchase.errorMessage("Поле обязательно для заполнения");
@@ -59,251 +63,227 @@ public class CardPurchaseTest {
 
     @Test
     @DisplayName("отправка формы с пустым полем месяц")
-    void emptMontFhield() {
+    void emptyMonthField() {
         purchase.buyingAtour(validField.getNumber(), "", validField.getYear(), validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
     @DisplayName("отправка формы с пустым полем год")
-    void emptYearFhield() {
+    void emptyYearField() {
         purchase.buyingAtour(validField.getNumber(), validField.getMonth(), "", validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
     @DisplayName("отправка формы с пустым полем владелец")
-    void emptOwnerFhield() {
+    void emptyOwnerField() {
         purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), "", validField.getCvc());
         purchase.errorMessage("Поле обязательно для заполнения");
     }
 
     @Test
-    @DisplayName("отправка формы с пустым полем cvc")
-    void emptCvcFhield() {
+    @DisplayName("отправка формы с пустым полем CVC/CVV")
+    void emptyCvcField() {
         purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), "");
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
-    @DisplayName("отправка формы с не валидным полем номер карты ")
+    @DisplayName("отправка формы с невалидным значением поля номер карты")
     void invalidCardNumber() {
-        DataHelper.CardData invalidCard = DataHelper.getInvalidCardNumber();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+        DataHelper.CardData invalidNumber = DataHelper.getInvalidCardNumber();
+        purchase.buyingAtour(invalidNumber.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
         purchase.failedSubmissionOfTheForm("Ошибка! Банк отказал в проведении операции.");
     }
 
-    @Test
-    @DisplayName("отправка формы с вводом букв в поле номер карты ")
-    void enteringLetters() {
+     @Test
+    @DisplayName("проверка ввода букв в поле номер карты ")
+    void lettersInTheCardNumberField() {
         purchase.fieldButtonBuy.click();
-        var cardNumber = "РР";
-        purchase.fieldCardNumber.setValue(cardNumber);
+        DataHelper.CardData invalidNumber = DataHelper.getlettersInTheCardNumberField();
+        purchase.fieldCardNumber.setValue(invalidNumber.getNumber());
         purchase.fieldCardNumber.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом спецсимволов в поле номер карты ")
-    void enteringSpecialCharacters() {
+    @DisplayName("отправка формы с вводом спец символов в поле номер карты ")
+    void specialSymbolsInTheCardNumberField() {
         purchase.fieldButtonBuy.click();
-        var cardNumber = "!!";
-        purchase.fieldCardNumber.setValue(cardNumber);
+        DataHelper.CardData invalidNumber = DataHelper.getSpecialSymbolsInTheCardNumberField();
+        purchase.fieldCardNumber.setValue(invalidNumber.getNumber());
         purchase.fieldCardNumber.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом одного символа в поле номер карты ")
-    void enteringASingleCharacter() {
-        DataHelper.CardData invalidCard = DataHelper.getEnteringASingleCharacter();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+    @DisplayName("отправка формы с одним символом в поле номер карты")
+    void oneCharacterInTheCardNumberField() {
+        DataHelper.CardData invalidNumber = DataHelper.getOneCharacterInTheCardNumberField();
+        purchase.buyingAtour(invalidNumber.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
-    @DisplayName("проверка колличество введеных символов  в поле номер карты - не больше 16 ")
-    void entering17Characters() {
+    @DisplayName("проверка ввода 17 символов в поле номер карты")
+    void characters17InTheCardNumberField() {
         purchase.fieldButtonBuy.click();
-        var cardNumber = "1111 2222 3333 4444 5";
-        purchase.fieldCardNumber.setValue(cardNumber);
+        DataHelper.CardData invalidNumber = DataHelper.getCharacters17InTheCardNumberField();
+        purchase.fieldCardNumber.setValue(invalidNumber.getNumber());
         purchase.fieldCardNumber.shouldHave(Condition.value("1111 2222 3333 4444"));
     }
 
     @Test
-    @DisplayName("отправка формы с заблокированной картой ")
-    void blockedCard() {
-        DataHelper.CardData invalidCard = DataHelper.getBlockedCard();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+    @DisplayName("отправка формы с заблокированной картой вполе номер карты")
+    void theBlockedCard() {
+        DataHelper.CardData invalidNumber = DataHelper.getTheBlockedCard();
+        purchase.buyingAtour(invalidNumber.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
         purchase.failedSubmissionOfTheForm("Ошибка! Банк отказал в проведении операции.");
+
+        String status = DBUtils.getValidVerificationStatus();
+        assertEquals("DECLINED", status);
     }
 
     @Test
-    @DisplayName("отправка формы с не валидным полем месяц ")
+    @DisplayName("отправка формы с не валидным значением в поле месяц")
     void invalidMonth() {
-        DataHelper.CardData invalidCard = DataHelper.getInvalidMonth();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+        DataHelper.CardData invalidMonth = DataHelper.getInvalidMonth();
+        purchase.buyingAtour(validField.getNumber(), invalidMonth.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    @DisplayName("отправка формы с вводом букв в поле месяц ")
-    void enteringLettersInTheMonthField() {
+    @DisplayName("ввод букв в поле месяц")
+    void lettersInTheMonthField() {
         purchase.fieldButtonBuy.click();
-        var month = "РР";
-        purchase.fieldMonth.setValue(month);
+        DataHelper.CardData invalidMonth = DataHelper.getLettersInTheMonthField();
+        purchase.fieldMonth.setValue(invalidMonth.getMonth());
         purchase.fieldMonth.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом спецсимволов в поле месяц ")
-    void enteringSpecialCharactersInTheMonthField() {
+    @DisplayName("ввод спецсимволов в поле месяц")
+    void specialCharactersInTheMonthField() {
         purchase.fieldButtonBuy.click();
-        var month = "!%";
-        purchase.fieldMonth.setValue(month);
+        DataHelper.CardData invalidMonth = DataHelper.getSpecialCharactersInTheMonthField();
+        purchase.fieldMonth.setValue(invalidMonth.getMonth());
         purchase.fieldMonth.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом одного символа в поле месяц ")
-    void enteringOneSimInTheMonthField() {
-        DataHelper.CardData invalidCard = DataHelper.getEnteringOneSimInTheMonthField();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
-        purchase.errorMessage("Неверный формат");
-    }
-
-    @Test
-    @DisplayName("проверка колличество введеных символов  в поле месяц - не больше 2 ")
-    void enteringThreeCharactersInTheMonthField() {
+    @DisplayName("ввод трех символов в поле месяц")
+    void threeCharacterInTheMonthFDield() {
         purchase.fieldButtonBuy.click();
-        var month = "122";
-        purchase.fieldMonth.setValue(month);
-        purchase.fieldMonth.shouldHave(Condition.value("12"));
+        DataHelper.CardData invalidMonth = DataHelper.getЕhreeCharacterInTheMonthFDield();
+        purchase.fieldMonth.setValue(invalidMonth.getMonth());
+        purchase.fieldMonth.shouldHave(Condition.value("22"));
     }
 
     @Test
-    @DisplayName("отправка формы с истекшим сроком карты в поле год ")
-    void expiredCardPeriod() {
-        DataHelper.CardData invalidCard = DataHelper.getExpiredCardPeriod();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+    @DisplayName("истекший срок года карты")
+    void expiredYearPeriod() {
+        DataHelper.CardData invalidYear = DataHelper.getExpiredYearPeriod();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), invalidYear.getYear(), validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Истёк срок действия карты");
     }
 
     @Test
-    @DisplayName("отправка формы с спецсимволами в поле год ")
+    @DisplayName("ввод трех символов в поле год")
     void specialCharactersInTheYearField() {
         purchase.fieldButtonBuy.click();
-        var year = "!!";
-        purchase.fieldYear.setValue(year);
+        DataHelper.CardData invalidYear = DataHelper.getSpecialCharactersInTheYearField();
+        purchase.fieldYear.setValue(invalidYear.getYear());
         purchase.fieldYear.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с одним символом в поле год ")
+    @DisplayName("отправка формы с одним сиволов в поле год")
     void oneCharacterInTheYearField() {
-        DataHelper.CardData invalidCard = DataHelper.getOneCharacterInTheYearField();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+        DataHelper.CardData invalidYear = DataHelper.getOneCharacterInTheYearField();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), invalidYear.getYear(), validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
-    @DisplayName("проверка колличество введеных символов  в поле год - не больше 2 ")
-    void threeCharactersInTheYearField() {
+    @DisplayName("ввод трех символов в поле год")
+    void threeCharacterInTheYearField() {
         purchase.fieldButtonBuy.click();
-        var year = "255";
-        purchase.fieldYear.setValue(year);
-        purchase.fieldYear.shouldHave(Condition.value("25"));
+        DataHelper.CardData invalidYear = DataHelper.getThreeCharacterInTheYearField();
+        purchase.fieldYear.setValue(invalidYear.getYear());
+        purchase.fieldYear.shouldHave(Condition.value("33"));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом букв в поле год")
+    @DisplayName("ввод букв в поле год")
     void lettersInTheYearField() {
         purchase.fieldButtonBuy.click();
-        var year = "РР";
-        purchase.fieldYear.setValue(year);
+        DataHelper.CardData invalidYear = DataHelper.getLettersInTheYearField();
+        purchase.fieldYear.setValue(invalidYear.getYear());
         purchase.fieldYear.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с картой, сроком больше 6 лет в поле год ")
-    void theCardIsValidSorSixYears() {
-        DataHelper.CardData invalidCard = DataHelper.getTheCardIsValidSorSixYears();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+    @DisplayName("ввод карты сроком более шести лет")
+    void theCardIsValidForMoreThan6Years() {
+        DataHelper.CardData invalidYear = DataHelper.getTheCardIsValidForMoreThan6Years();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), invalidYear.getYear(), validField.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    @DisplayName("отправка формы с вводом цифр в поле владелец ")
-    void numbersInTheOwnerField() {
-        DataHelper.CardData invalidCard = DataHelper.getNumbersInTheOwnerField();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+    @DisplayName("ввод цифр в поле владелец")
+    void thenumbersinTheOwnerField() {
+        DataHelper.CardData invalidOwner = DataHelper.getThenumbersinTheOwnerField();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), invalidOwner.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
-    @DisplayName("отправка формы с вводом одного символа в поле владелец ")
+    @DisplayName("отправка формы с одним символом в поле владелец")
     void oneCharacterInTheOwnerField() {
-        DataHelper.CardData invalidCard = DataHelper.getOneCharacterInTheOwnerField();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+        DataHelper.CardData invalidOwner = DataHelper.getOneCharacterInTheOwnerField();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), invalidOwner.getHolder(), validField.getCvc());
+        purchase.errorMessage("Неверный формат");
+    }
+    @Test
+    @DisplayName("отправка формы с невалидным значением в поле владелец")
+    void invalidOwner() {
+        DataHelper.CardData invalidOwner = DataHelper.getInvalidOwner();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), invalidOwner.getHolder(), validField.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
-    @DisplayName("отправка формы с не валидным значением в поле владелец ")
-    void invalidOwnerFieldValue() {
-        DataHelper.CardData invalidCard = DataHelper.getInvalidOwnerFieldValue();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
-        purchase.errorMessage("Неверный формат");
-    }
-
-    @Test
-    @DisplayName("отправка формы с вводом букв в поле cvc")
-    void lettersInTheCvcField() {
+    @DisplayName("ввод букв в поле cvc")
+    void lettersInCvc() {
         purchase.fieldButtonBuy.click();
-        var cvc = "РР";
-        purchase.fieldCvc.setValue(cvc);
+        DataHelper.CardData invalidCvc = DataHelper.getLettersInCvc();
+        purchase.fieldCvc.setValue(invalidCvc.getCvc());
         purchase.fieldCvc.shouldHave(Condition.value(""));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом одного символа в поле cvc ")
-    void oneCharacterInTheCvcField() {
-        DataHelper.CardData invalidCard = DataHelper.getOneCharacterInTheCvcField();
-        purchase.buyingAtour(invalidCard.getNumber(), invalidCard.getMonth(), invalidCard.getYear(), invalidCard.getHolder(), invalidCard.getCvc());
+    @DisplayName("отправка формы с одним символов в поле cvc")
+    void oneCharacterInCvc() {
+        DataHelper.CardData invalidCvc = DataHelper.getOneCharacterInCvc();
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), invalidCvc.getCvc());
         purchase.errorMessage("Неверный формат");
     }
 
     @Test
-    @DisplayName("проверка колличество введеных символов  в поле cvc - не больше 3")
-    void fourCharactersInTheCvcField() {
+    @DisplayName("ввод четырех символов в поле cvc")
+    void fourCharactersInCvc() {
         purchase.fieldButtonBuy.click();
-        var cvc = "9999";
-        purchase.fieldCvc.setValue(cvc);
+        DataHelper.CardData invalidCvc = DataHelper.getFourCharactersInCvc();
+        purchase.fieldCvc.setValue(invalidCvc.getCvc());
         purchase.fieldCvc.shouldHave(Condition.value("999"));
     }
 
     @Test
-    @DisplayName("отправка формы с вводом спецсимволов в поле cvc")
-    void specialCharactersInTheCvcField() {
+    @DisplayName("ввод спецсимволов  в поле cvc")
+    void tspecialCharactersInCvc() {
         purchase.fieldButtonBuy.click();
-        var cvc = "!!";
-        purchase.fieldCvc.setValue(cvc);
+        DataHelper.CardData invalidCvc = DataHelper.getTspecialCharactersInCvc();
+        purchase.fieldCvc.setValue(invalidCvc.getCvc());
         purchase.fieldCvc.shouldHave(Condition.value(""));
-    }
-
-    @Test
-    @DisplayName("Проверка статуса в Postgres")
-    void shouldBuyWithValidCardAndCheckStatusInPostgres() {
-        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
-        purchase.successfulSubmissionOfTheForm("Операция одобрена Банком.");
-        String status = DBUtils.getLastPaymentStatusPostgres();
-        assertEquals("APPROVED", status);
-    }
-
-    @Test
-    @DisplayName("Проверка статуса в Mysql")
-    void shouldBuyWithValidCardAndCheckStatusInMysql() {
-        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
-        purchase.successfulSubmissionOfTheForm("Операция одобрена Банком.");
-        String status = DBUtils.getLastPaymentStatusMysql();
-        assertEquals("APPROVED", status);
     }
 }

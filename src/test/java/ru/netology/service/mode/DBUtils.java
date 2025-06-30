@@ -1,52 +1,24 @@
 package ru.netology.service.mode;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
+
 import java.sql.*;
 
 public class DBUtils {
+    private static final String URL = System.getProperty("db.url");
+    private static final String USER = "app";
+    private static final String PASSWORD = "pass";
 
-    private static final String POSTGRES_URL = "jdbc:postgresql://localhost:5432/app";
-    private static final String POSTGRES_USER = "app";
-    private static final String POSTGRES_PASSWORD = "pass";
-
-    private static final String MYSQL_URL = "jdbc:mysql://localhost:3306/app";
-    private static final String MYSQL_USER = "app";
-    private static final String MYSQL_PASSWORD = "pass";
-
-    public static Connection getPostgresConnection() throws SQLException {
-        return DriverManager.getConnection(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASSWORD);
-    }
-
-    public static Connection getMysqlConnection() throws SQLException {
-        return DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
-    }
-
-    public static String getLastPaymentStatusPostgres() {
-        String status = null;
+    public static String getValidVerificationStatus() {
         String query = "SELECT status FROM payment_entity ORDER BY created DESC LIMIT 1";
-        try (Connection conn = getPostgresConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                status = rs.getString("status");
-            }
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            QueryRunner runner = new QueryRunner();
+            return runner.query(conn, query, new ScalarHandler<>());
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка при получении последнего статуса", e);
+            throw new RuntimeException("Ошибка при получении статуса верификации", e);
         }
-        return status;
-    }
-
-    public static String getLastPaymentStatusMysql() {
-        String status = null;
-        String query = "SELECT status FROM payment_entity ORDER BY created DESC LIMIT 1";
-        try (Connection conn = getMysqlConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                status = rs.getString("status");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Ошибка при получении последнего статуса", e);
-        }
-        return status;
     }
 }
+
+

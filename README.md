@@ -42,8 +42,8 @@
 ## Запуск автотестов
 Тесты написаны с использованием JUnit 5 + Selenide + REST Assured.
 Команды для запуска:
-- Для PostgreSQL: ./gradlew clean test "-Dspring.profiles.active=postgres"
-- Для MySQL: ./gradlew clean test "-Dspring.profiles.active=mysql"
+- Для PostgreSQL: ./gradlew clean test "-Ddb.url=jdbc:postgresql://localhost:5432/app" "-Dspring.profiles.active=postgres"
+- Для MySQL: ./gradlew clean test "-Ddb.url=jdbc:mysql://localhost:3306/app" "-Dspring.profiles.active=mysql"
 
 ## Генерация и просмотр отчёта Allure
 После запуска тестов выполнить команду для генерации и просмотра отчёта:

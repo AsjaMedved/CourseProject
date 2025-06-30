@@ -12,8 +12,6 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-@DisplayName("Купить -> Оплата по карте")
-
 public class Purchase {
 
     public SelenideElement fieldButtonBuy = $$("button").findBy(text("Купить"));
