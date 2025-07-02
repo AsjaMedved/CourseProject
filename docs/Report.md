@@ -12,11 +12,11 @@
 - Всего: 32 тест-кейсов
 - Успешно пройдены: 28 тестов (87.5%)
 - Провалено: 4 теста (12.5%)
- ![img.png](img.png)
+ ![img.png](../img.png)
 
 ## Общие рекомендации
 - Исправить баг, связанный с неверной валидацией поля "Владелец" — при заполнении невалидными значениями операция покупки проходит успешно (см. [issue #1](https://github.com/AsjaMedved/CourseProject/issues/1)) и (см. [issue #2](https://github.com/AsjaMedved/CourseProject/issues/2))
-- Исправить баг, связанный с не верной валидацие поля "Номер карты" - при заполнении данными заблокированной карты операция покупки проходит успешно (см. [issue #3](https://github.com/AsjaMedved/CourseProject/issues/3)) и (см. [issue #4](https://github.com/AsjaMedved/CourseProject/issues/4))
+- Исправить баг, связанный с не верной валидацией поля "Номер карты" - при заполнении данными заблокированной карты операция покупки проходит успешно (см. [issue #3](https://github.com/AsjaMedved/CourseProject/issues/3)) и (см. [issue #4](https://github.com/AsjaMedved/CourseProject/issues/4))
 - 
 ## Интеграция отчётов
 **Отчёт Allure**
@@ -42,5 +42,5 @@
   * (см. [issue #3](https://github.com/AsjaMedved/CourseProject/issues/3)) 
   * (см. [issue #4](https://github.com/AsjaMedved/CourseProject/issues/4))
   ![img_6.png](../img_6.png)
-  ![img.png](../img.png)
+   ![img_2.png](../img_2.png)
 
