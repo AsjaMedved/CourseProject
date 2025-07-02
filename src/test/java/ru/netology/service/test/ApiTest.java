@@ -9,16 +9,15 @@ import ru.netology.service.mode.DBUtils;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.netology.service.mode.Api.buyTour;
 
 public class ApiTest {
-
-    private final Api apiClient = new Api("http://localhost:9999");
 
     @Test
     void purchaseStatusWithaValidCard() {
         var validCard = DataHelper.getValidField();
 
-        var response = apiClient.buyTour(validCard);
+        var response = buyTour(validCard);
         response.then()
                 .statusCode(200)
                 .body("status", equalTo("APPROVED"));
@@ -31,7 +30,7 @@ public class ApiTest {
     void statusWhenBuyingWithAnInvalidCard() {
         var invalidCard = DataHelper.getTheBlockedCard();
 
-        var response = apiClient.buyTour(invalidCard);
+        var response = buyTour(invalidCard);
         response.then()
                 .statusCode(200)
                 .body("status", equalTo("DECLINED"));

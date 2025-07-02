@@ -7,14 +7,12 @@ import ru.netology.service.data.DataHelper;
 import static io.restassured.RestAssured.given;
 
 public class Api {
+    private static final String baseUri = "http://localhost:9999";
 
-        private final String baseUri;
+    private Api() {
+    }
 
-        public Api (String baseUri) {
-            this.baseUri = baseUri;
-        }
-
-        public Response buyTour(DataHelper.CardData cardData) {
+    public static Response buyTour(DataHelper.CardData cardData) {
             return given()
                     .baseUri(baseUri)
                     .contentType(ContentType.JSON)

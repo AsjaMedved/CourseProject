@@ -100,19 +100,19 @@ public class CardPurchaseTest {
      @Test
     @DisplayName("проверка ввода букв в поле номер карты ")
     void lettersInTheCardNumberField() {
-        purchase.fieldButtonBuy.click();
-        DataHelper.CardData invalidNumber = DataHelper.getlettersInTheCardNumberField();
-        purchase.fieldCardNumber.setValue(invalidNumber.getNumber());
-        purchase.fieldCardNumber.shouldHave(Condition.value(""));
+         purchase.buttonBuy();
+         DataHelper.CardData invalidNumber = DataHelper.getlettersInTheCardNumberField();
+         purchase.buyingAtour(invalidNumber.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.cardNumber("");
     }
 
     @Test
     @DisplayName("отправка формы с вводом спец символов в поле номер карты ")
     void specialSymbolsInTheCardNumberField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidNumber = DataHelper.getSpecialSymbolsInTheCardNumberField();
-        purchase.fieldCardNumber.setValue(invalidNumber.getNumber());
-        purchase.fieldCardNumber.shouldHave(Condition.value(""));
+        purchase.buyingAtour(invalidNumber.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.cardNumber("");
     }
 
     @Test
@@ -126,10 +126,10 @@ public class CardPurchaseTest {
     @Test
     @DisplayName("проверка ввода 17 символов в поле номер карты")
     void characters17InTheCardNumberField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidNumber = DataHelper.getCharacters17InTheCardNumberField();
-        purchase.fieldCardNumber.setValue(invalidNumber.getNumber());
-        purchase.fieldCardNumber.shouldHave(Condition.value("1111 2222 3333 4444"));
+        purchase.buyingAtour(invalidNumber.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.cardNumber("1111 2222 3333 4444");
     }
 
     @Test
@@ -154,28 +154,28 @@ public class CardPurchaseTest {
     @Test
     @DisplayName("ввод букв в поле месяц")
     void lettersInTheMonthField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidMonth = DataHelper.getLettersInTheMonthField();
-        purchase.fieldMonth.setValue(invalidMonth.getMonth());
-        purchase.fieldMonth.shouldHave(Condition.value(""));
+        purchase.buyingAtour(validField.getNumber(), invalidMonth.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.month("");
     }
 
     @Test
     @DisplayName("ввод спецсимволов в поле месяц")
     void specialCharactersInTheMonthField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidMonth = DataHelper.getSpecialCharactersInTheMonthField();
-        purchase.fieldMonth.setValue(invalidMonth.getMonth());
-        purchase.fieldMonth.shouldHave(Condition.value(""));
+        purchase.buyingAtour(validField.getNumber(), invalidMonth.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.month("");
     }
 
     @Test
     @DisplayName("ввод трех символов в поле месяц")
     void threeCharacterInTheMonthFDield() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidMonth = DataHelper.getЕhreeCharacterInTheMonthFDield();
-        purchase.fieldMonth.setValue(invalidMonth.getMonth());
-        purchase.fieldMonth.shouldHave(Condition.value("22"));
+        purchase.buyingAtour(validField.getNumber(), invalidMonth.getMonth(), validField.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.month("22");
     }
 
     @Test
@@ -187,12 +187,12 @@ public class CardPurchaseTest {
     }
 
     @Test
-    @DisplayName("ввод трех символов в поле год")
+    @DisplayName("ввод спец символов в поле год")
     void specialCharactersInTheYearField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidYear = DataHelper.getSpecialCharactersInTheYearField();
-        purchase.fieldYear.setValue(invalidYear.getYear());
-        purchase.fieldYear.shouldHave(Condition.value(""));
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), invalidYear.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.year("");
     }
 
     @Test
@@ -206,19 +206,19 @@ public class CardPurchaseTest {
     @Test
     @DisplayName("ввод трех символов в поле год")
     void threeCharacterInTheYearField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidYear = DataHelper.getThreeCharacterInTheYearField();
-        purchase.fieldYear.setValue(invalidYear.getYear());
-        purchase.fieldYear.shouldHave(Condition.value("33"));
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), invalidYear.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.year("33");
     }
 
     @Test
     @DisplayName("ввод букв в поле год")
     void lettersInTheYearField() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidYear = DataHelper.getLettersInTheYearField();
-        purchase.fieldYear.setValue(invalidYear.getYear());
-        purchase.fieldYear.shouldHave(Condition.value(""));
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), invalidYear.getYear(), validField.getHolder(), validField.getCvc());
+        purchase.year("");
     }
 
     @Test
@@ -255,10 +255,10 @@ public class CardPurchaseTest {
     @Test
     @DisplayName("ввод букв в поле cvc")
     void lettersInCvc() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidCvc = DataHelper.getLettersInCvc();
-        purchase.fieldCvc.setValue(invalidCvc.getCvc());
-        purchase.fieldCvc.shouldHave(Condition.value(""));
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), invalidCvc.getCvc());
+        purchase.cvc("");
     }
 
     @Test
@@ -272,18 +272,18 @@ public class CardPurchaseTest {
     @Test
     @DisplayName("ввод четырех символов в поле cvc")
     void fourCharactersInCvc() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidCvc = DataHelper.getFourCharactersInCvc();
-        purchase.fieldCvc.setValue(invalidCvc.getCvc());
-        purchase.fieldCvc.shouldHave(Condition.value("999"));
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), invalidCvc.getCvc());
+        purchase.cvc("999");
     }
 
     @Test
     @DisplayName("ввод спецсимволов  в поле cvc")
     void tspecialCharactersInCvc() {
-        purchase.fieldButtonBuy.click();
+        purchase.buttonBuy();
         DataHelper.CardData invalidCvc = DataHelper.getTspecialCharactersInCvc();
-        purchase.fieldCvc.setValue(invalidCvc.getCvc());
-        purchase.fieldCvc.shouldHave(Condition.value(""));
+        purchase.buyingAtour(validField.getNumber(), validField.getMonth(), validField.getYear(), validField.getHolder(), invalidCvc.getCvc());
+        purchase.cvc("");
     }
 }
